@@ -2,6 +2,7 @@ services:
   # Auth Service
   - type: web
     name: auth-service
+    plan: free
     env: node
     buildCommand: npm install
     startCommand: node server.js
@@ -13,6 +14,7 @@ services:
   # Grocery Service
   - type: web
     name: grocery-service
+    plan: free
     env: node
     buildCommand: npm install
     startCommand: node server.js
@@ -26,6 +28,7 @@ services:
   # Cart Service
   - type: web
     name: cart-service
+    plan: free
     env: node
     buildCommand: npm install
     startCommand: node server.js
@@ -37,6 +40,7 @@ services:
   # Order Service
   - type: web
     name: order-service
+    plan: free
     env: node
     buildCommand: npm install
     startCommand: node server.js
@@ -48,6 +52,7 @@ services:
   # Frontend Service (Gateway)
   - type: web
     name: frontend-service
+    plan: free
     env: node
     buildCommand: npm install
     startCommand: node server.js
