@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Cloud Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body style="min-height: 100vh; display: flex; align-items: center;">
+
+    <div class="form-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="color: var(--primary); margin: 0; font-size: 2rem;">Smart Grocery Cart</h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Sign in to your account</p>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="e.g. admin">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; height: 3rem; margin-top: 0.5rem;" onclick="login()">
+            Sign In
+        </button>
+
+        <p id="error"
+            style="color: #ef4444; font-size: 0.875rem; text-align: center; margin-top: 1rem; min-height: 1.25rem;"></p>
+
+        <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <p style="font-size: 0.875rem; color: var(--text-muted);">New customer?</p>
+            <a href="register.html" class="btn btn-outline" style="width: 100%; text-decoration: none;">Create
+                Account</a>
+        </div>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        async function login() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const err = document.getElementById('error');
+            err.textContent = '';
+
+            try {
+                const res = await fetch(API.auth + '/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('shop_token', data.token);
+                    localStorage.setItem('shop_user', u);
+                    window.location.href = 'products.html';
+                } else {
+                    err.textContent = 'Invalid username or password';
+                }
+            } catch (e) {
+                err.textContent = 'Service unavailable. Please try again later.';
+            }
+        }
+
+        if (localStorage.getItem('shop_token')) window.location.href = 'products.html';
+    </script>
+</body>
+
+</html>

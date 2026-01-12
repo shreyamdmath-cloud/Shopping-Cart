@@ -1,0 +1,73 @@
+services:
+  # MongoDB (Persistence)
+  - type: database
+    name: shop-db
+    databaseName: grocery_db
+    user: admin
+
+  # Auth Service
+  - type: web
+    name: auth-service
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: auth-service
+    envVars:
+      - key: PORT
+        value: 5001
+
+  # Grocery Service
+  - type: web
+    name: grocery-service
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: grocery-service
+    envVars:
+      - key: PORT
+        value: 5002
+      - key: MONGO_URI
+        fromDatabase:
+          name: shop-db
+          property: connectionString
+
+  # Cart Service
+  - type: web
+    name: cart-service
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: cart-service
+    envVars:
+      - key: PORT
+        value: 5003
+
+  # Order Service
+  - type: web
+    name: order-service
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: order-service
+    envVars:
+      - key: PORT
+        value: 5004
+
+  # Frontend Service (Gateway)
+  - type: web
+    name: frontend-service
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: frontend-service
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: AUTH_SERVICE
+        value: http://auth-service:5001
+      - key: GROCERY_SERVICE
+        value: http://grocery-service:5002
+      - key: CART_SERVICE
+        value: http://cart-service:5003
+      - key: ORDER_SERVICE
+        value: http://order-service:5004

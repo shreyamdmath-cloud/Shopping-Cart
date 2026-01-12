@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Catalog - Smart Grocery Cart</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header></header>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+            <div>
+                <h2 style="margin: 0; font-size: 1.875rem;">Explore Groceries</h2>
+                <p style="color: var(--text-muted); margin: 0.25rem 0 0;">Fresh and essential cloud-native groceries</p>
+            </div>
+            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                Showing all available items
+            </div>
+        </div>
+
+        <div id="product-list" class="grid">
+            <!-- Shimmer effect or loading state could go here -->
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="common.js"></script>
+    <script>
+        const auth = UI.checkAuth();
+        if (auth) {
+            renderHeader();
+            loadGroceries();
+        }
+
+        async function loadGroceries() {
+            try {
+                const res = await fetch(API.groceries + '/groceries');
+                const groceries = await res.json();
+                const list = document.getElementById('product-list');
+
+                list.innerHTML = groceries.map(p => {
+                    const itemId = p.id || p._id;
+                    return `
+                    <div class="card">
+                        <div style="height: 180px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                            ${getGroceryIcon(p.name)}
+                        </div>
+                        <div class="card-body">
+                            <div class="card-meta">${p.category}</div>
+                            <h3 class="card-title">${p.name}</h3>
+                            <div class="card-price">₹${p.price.toFixed(2)}</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: -0.5rem;">per ${p.unit}</p>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="addToCart(${itemId}, '${p.name}', ${p.price})">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            } catch (e) {
+                console.error('Failed to load groceries');
+            }
+        }
+
+        async function addToCart(id, name, price) {
+            try {
+                await fetch(`${API.cart}/cart/${auth.user}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, price, quantity: 1 })
+                });
+                UI.showToast(`<strong>${name}</strong> added to your cart!`, 'View Cart', 'cart.html');
+            } catch (e) {
+                UI.showToast('Failed to add item. Please try again.');
+            }
+        }
+
+        function getGroceryIcon(name) {
+            if (name.includes('Vegetables')) return '🥦';
+            if (name.includes('Fruits')) return '🍎';
+            if (name.includes('Rice')) return '🌾';
+            if (name.includes('Milk')) return '🥛';
+            if (name.includes('Oil')) return '🧴';
+            if (name.includes('Tomato')) return '🍅';
+            if (name.includes('Potato')) return '🥔';
+            if (name.includes('Flour')) return '🌾';
+            if (name.includes('Paneer')) return '🧈';
+            if (name.includes('Curd')) return '🥛';
+            if (name.includes('Almond')) return '🌰';
+            if (name.includes('Cashew')) return '🥜';
+            if (name.includes('Tea')) return '☕';
+            if (name.includes('Coffee')) return '☕';
+            return '📦';
+        }
+    </script>
+</body>
+
+</html>

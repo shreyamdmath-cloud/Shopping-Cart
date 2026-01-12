@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders - Smart Grocery Cart</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header></header>
+
+    <div class="container" style="max-width: 800px;">
+        <h2 style="margin-bottom: 2rem;">Order History</h2>
+
+        <div id="order-list">
+            <!-- Shimmer loading effect -->
+        </div>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        const auth = UI.checkAuth();
+        if (auth) {
+            renderHeader();
+            loadOrders();
+        }
+
+        async function loadOrders() {
+            try {
+                const res = await fetch(`${API.orders}/orders/${auth.user}`);
+                const orders = await res.json();
+                const list = document.getElementById('order-list');
+
+                if (orders.length === 0) {
+                    list.innerHTML = `
+                        <div class="card" style="padding: 4rem; text-align: center;">
+                            <p style="color: var(--text-muted);">You haven't placed any grocery orders yet.</p>
+                            <a href="products.html" class="btn btn-primary" style="margin-top: 1rem; text-decoration: none;">Start Shopping</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = orders.reverse().map(o => `
+                    <div class="card" style="margin-bottom: 1.5rem;">
+                        <div style="background: #f8fafc; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; border-radius: 1rem 1rem 0 0;">
+                            <div>
+                                <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Order ID</div>
+                                <div style="font-weight: 700;">#${o.id}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Date Placed</div>
+                                <div style="font-weight: 600;">${new Date(o.date).toLocaleDateString()}</div>
+                            </div>
+                            <div style="background: #dcfce7; color: #166534; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">
+                                ${o.status}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            ${o.items.map(i => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px dashed var(--border);">
+                                    <div style="font-size: 0.9375rem;">
+                                        <strong>${i.name}</strong> × ${i.quantity}
+                                    </div>
+                                    <div style="font-weight: 600;">₹${(i.price * i.quantity).toFixed(2)}</div>
+                                </div>
+                            `).join('')}
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 1rem;">
+                                <div style="color: var(--text-muted); font-size: 0.8125rem;">
+                                    Payment Method: <span style="font-weight: 500;">Cloud Points</span>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 0.8125rem; color: var(--text-muted);">Total Amount</div>
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--secondary);">₹${o.total.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load orders');
+            }
+        }
+    </script>
+</body>
+
+</html>
