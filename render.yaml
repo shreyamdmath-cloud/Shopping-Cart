@@ -61,10 +61,22 @@ services:
       - key: PORT
         value: 5000
       - key: AUTH_SERVICE
-        value: http://auth-service:5001
+        fromService:
+          name: auth-service
+          type: web
+          property: host
       - key: GROCERY_SERVICE
-        value: http://grocery-service:5002
+        fromService:
+          name: grocery-service
+          type: web
+          property: host
       - key: CART_SERVICE
-        value: http://cart-service:5003
+        fromService:
+          name: cart-service
+          type: web
+          property: host
       - key: ORDER_SERVICE
-        value: http://order-service:5004
+        fromService:
+          name: order-service
+          type: web
+          property: host

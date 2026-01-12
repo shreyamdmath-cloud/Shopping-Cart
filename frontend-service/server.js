@@ -13,10 +13,20 @@ const GROCERY_SERVICE = process.env.GROCERY_SERVICE || 'http://localhost:5002';
 const CART_SERVICE = process.env.CART_SERVICE || 'http://localhost:5003';
 const ORDER_SERVICE = process.env.ORDER_SERVICE || 'http://localhost:5004';
 
-app.use('/api/auth', createProxyMiddleware({ target: AUTH_SERVICE, changeOrigin: true, pathRewrite: { '^/api/auth': '' } }));
-app.use('/api/groceries', createProxyMiddleware({ target: GROCERY_SERVICE, changeOrigin: true, pathRewrite: { '^/api/groceries': '' } }));
-app.use('/api/cart', createProxyMiddleware({ target: CART_SERVICE, changeOrigin: true, pathRewrite: { '^/api/cart': '' } }));
-app.use('/api/orders', createProxyMiddleware({ target: ORDER_SERVICE, changeOrigin: true, pathRewrite: { '^/api/orders': '' } }));
+const proxyOptions = (target) => ({
+    target,
+    changeOrigin: true,
+    pathRewrite: (path) => path.replace(/^\/api\/[^\/]+/, ''),
+    onError: (err, req, res) => {
+        console.error(`Proxy Error to ${target}:`, err);
+        res.status(503).send('Service unavailable. Please try again later.');
+    }
+});
+
+app.use('/api/auth', createProxyMiddleware(proxyOptions(AUTH_SERVICE)));
+app.use('/api/groceries', createProxyMiddleware(proxyOptions(GROCERY_SERVICE)));
+app.use('/api/cart', createProxyMiddleware(proxyOptions(CART_SERVICE)));
+app.use('/api/orders', createProxyMiddleware(proxyOptions(ORDER_SERVICE)));
 
 app.listen(PORT, () => {
     console.log(`Frontend/Gateway running on port ${PORT}`);
