@@ -1,10 +1,4 @@
 services:
-  # MongoDB (Persistence)
-  - type: database
-    name: shop-db
-    databaseName: grocery_db
-    user: admin
-
   # Auth Service
   - type: web
     name: auth-service
@@ -27,9 +21,7 @@ services:
       - key: PORT
         value: 5002
       - key: MONGO_URI
-        fromDatabase:
-          name: shop-db
-          property: connectionString
+        sync: false # User will provide the Atlas connection string manually in Render dashboard
 
   # Cart Service
   - type: web
