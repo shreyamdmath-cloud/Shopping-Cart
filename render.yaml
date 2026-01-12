@@ -7,9 +7,7 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     rootDir: auth-service
-    envVars:
-      - key: PORT
-        value: 5001
+    envVars: []
 
   # Grocery Service
   - type: web
@@ -20,8 +18,6 @@ services:
     startCommand: node server.js
     rootDir: grocery-service
     envVars:
-      - key: PORT
-        value: 5002
       - key: MONGO_URI
         sync: false # User will provide the Atlas connection string manually in Render dashboard
 
@@ -33,9 +29,7 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     rootDir: cart-service
-    envVars:
-      - key: PORT
-        value: 5003
+    envVars: []
 
   # Order Service
   - type: web
@@ -45,9 +39,7 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     rootDir: order-service
-    envVars:
-      - key: PORT
-        value: 5004
+    envVars: []
 
   # Frontend Service (Gateway)
   - type: web
@@ -58,25 +50,11 @@ services:
     startCommand: node server.js
     rootDir: frontend-service
     envVars:
-      - key: PORT
-        value: 5000
       - key: AUTH_SERVICE
-        fromService:
-          name: auth-service
-          type: web
-          property: host
+        value: http://auth-service:10000
       - key: GROCERY_SERVICE
-        fromService:
-          name: grocery-service
-          type: web
-          property: host
+        value: http://grocery-service:10000
       - key: CART_SERVICE
-        fromService:
-          name: cart-service
-          type: web
-          property: host
+        value: http://cart-service:10000
       - key: ORDER_SERVICE
-        fromService:
-          name: order-service
-          type: web
-          property: host
+        value: http://order-service:10000
