@@ -55,15 +55,15 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: u, password: p })
                 });
-                const data = await res.json();
                 if (res.ok) {
                     alert('Registration successful! Please login.');
                     window.location.href = 'login.html';
                 } else {
-                    err.textContent = data.message || 'Registration failed';
+                    const data = await res.json();
+                    err.textContent = data.message || data.error || 'Registration failed';
                 }
             } catch (e) {
-                err.textContent = 'Service unavailable. Please try again later.';
+                err.textContent = 'The backend service is currently starting up or unreachable. Please try again in a few seconds.';
             }
         }
     </script>
