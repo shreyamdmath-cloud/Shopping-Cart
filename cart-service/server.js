@@ -52,6 +52,6 @@ app.delete('/cart/:user', (req, res) => {
     res.status(204).send();
 });
 
-app.listen(PORT, () => {
-    console.log(`Cart Service running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Cart Service running on port ${PORT} (0.0.0.0)`);
 });

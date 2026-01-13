@@ -30,6 +30,6 @@ app.post('/orders', (req, res) => {
     res.status(201).json(order);
 });
 
-app.listen(PORT, () => {
-    console.log(`Order Service running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Order Service running on port ${PORT} (0.0.0.0)`);
 });

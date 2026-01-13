@@ -51,10 +51,10 @@ services:
     rootDir: frontend-service
     envVars:
       - key: AUTH_SERVICE
-        value: http://auth-service:10000
+        value: http://auth-service:5001
       - key: GROCERY_SERVICE
-        value: http://grocery-service:10000
+        value: http://grocery-service:5002
       - key: CART_SERVICE
-        value: http://cart-service:10000
+        value: http://cart-service:5003
       - key: ORDER_SERVICE
-        value: http://order-service:10000
+        value: http://order-service:5004

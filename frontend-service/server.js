@@ -17,9 +17,18 @@ const proxyOptions = (target) => ({
     target,
     changeOrigin: true,
     pathRewrite: (path) => path.replace(/^\/api\/[^\/]+/, ''),
+    proxyTimeout: 30000, // 30 seconds to wait for backend response
+    timeout: 30000,      // 30 seconds for connection
+    onProxyReq: (proxyReq, req, res) => {
+        console.log(`[Gateway] Routing ${req.method} ${req.url} -> ${target}`);
+    },
     onError: (err, req, res) => {
-        console.error(`Proxy Error to ${target}:`, err);
-        res.status(503).send('Service unavailable. Please try again later.');
+        console.error(`[Gateway] ERROR proxying to ${target}${req.url}:`, err.message);
+        res.status(503).json({
+            error: 'Service unavailable',
+            message: 'The backend service is currently starting up or unreachable. Please try again in a few seconds.',
+            target: target
+        });
     }
 });
 
